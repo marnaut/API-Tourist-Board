@@ -1,5 +1,9 @@
 package com.mevludin.APITouristBoard.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 
 @Entity
@@ -13,8 +17,10 @@ public class Review {
     @Column(nullable = false)
     private int mark;
 
-    @ManyToOne
-    @JoinColumn(name = "sight_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "sight_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private Sight sight;
 
     public Review() {

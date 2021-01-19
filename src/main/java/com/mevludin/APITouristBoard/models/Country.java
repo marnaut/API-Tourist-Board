@@ -2,6 +2,7 @@ package com.mevludin.APITouristBoard.models;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Country {
@@ -19,7 +20,7 @@ public class Country {
     private Boolean active = true;
 
     @OneToMany(mappedBy = "country")
-    private List<Municipality> municipalityList;
+    private Set<Municipality> municipalityList;
 
 
     public Country() { }
@@ -58,7 +59,8 @@ public class Country {
         this.active = active;
     }
 
-    public List<Municipality> getMunicipalityList() {
+    public Set<Municipality> getMunicipalityList() {
         return municipalityList;
     }
+
 }

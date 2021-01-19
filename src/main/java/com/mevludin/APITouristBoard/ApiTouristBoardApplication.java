@@ -14,30 +14,4 @@ public class ApiTouristBoardApplication {
 		SpringApplication.run(ApiTouristBoardApplication.class, args);
 	}
 
-	@Bean
-	public CommandLineRunner mappingDemo(CountryRepository stateRepository, MunicipalityRepository municipalityRepository, SightRepository sightRepository, ReviewRepository reviewRepository){
-		return args -> {
-			try{
-				Country country = new Country();
-				country.setCountryName("Bosnia");
-				country.setCountryAbbreviations("ba");
-				stateRepository.save(country);
-
-
-				Municipality municipality = new Municipality();
-				municipality.setName("Zenica");
-				municipality.setCountry(country);
-				municipalityRepository.save(municipality);
-
-				Sight sight = new Sight("Kuća Ive Andrića", "Bosansko-hercegovački Nobelovac", 11.304, 34.235, true, Importance.INEVITABLY, municipality);
-				sightRepository.save(sight);
-
-				Review review = new Review(5, sight);
-				reviewRepository.save(review);
-			} catch (Exception ex){
-				System.out.println("Error : " + ex.getMessage());
-			}
-
-		};
-	}
 }

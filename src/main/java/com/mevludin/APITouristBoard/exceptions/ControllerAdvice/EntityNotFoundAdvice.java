@@ -1,6 +1,6 @@
 package com.mevludin.APITouristBoard.exceptions.ControllerAdvice;
 
-import com.mevludin.APITouristBoard.exceptions.CountryNotFoundException;
+import com.mevludin.APITouristBoard.exceptions.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class CountryNotFoundAdvice {
+public class EntityNotFoundAdvice {
     @ResponseBody
-    @ExceptionHandler(CountryNotFoundException.class)
+    @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String countryNotFoundHandler(CountryNotFoundException ex){
+    String entityNotFoundHandler(EntityNotFoundException ex){
         return ex.getMessage();
 
     }

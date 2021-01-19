@@ -1,7 +1,9 @@
 package com.mevludin.APITouristBoard.exceptions;
-
-public class CountryNotFoundException extends RuntimeException {
-    public CountryNotFoundException(Long id, String entity) {
+/**
+ * Exception koji se poziva kada neki zapis nije pronađen
+ * */
+public class EntityNotFoundException extends RuntimeException {
+    public EntityNotFoundException(Long id, String entity) {
         super("Could not found " + entity+ " by : "+id);
     }
 }

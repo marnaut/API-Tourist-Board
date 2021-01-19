@@ -1,5 +1,9 @@
 package com.mevludin.APITouristBoard.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -28,8 +32,10 @@ public class Sight {
     @Column(nullable = false)
     private Importance importance;
 
-    @ManyToOne
-    @JoinColumn(name = "municipality_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "municipality_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
     private Municipality municipality;
 
     @OneToMany(mappedBy = "sight")
