@@ -12,13 +12,12 @@ public class Municipality {
     @Column(nullable = false, unique = true)
     private String name;
 
-    public Long getId() {
-        return id;
-    }
-
     @ManyToOne
     @JoinColumn(name = "country_id")
     private Country country;
+
+    @Column(nullable = false)
+    private Boolean active = true;
 
     @OneToMany(mappedBy = "municipality")
     private List<Sight> sights;
@@ -26,14 +25,16 @@ public class Municipality {
     public Municipality() {
     }
 
-    public Municipality(String name, Country country) {
+    public Municipality(String name, Country country, Boolean active) {
         this.name = name;
         this.country = country;
+        this.active = active;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
+
 
     public String getName() {
         return name;
@@ -47,7 +48,20 @@ public class Municipality {
         return country;
     }
 
-    public void setState(Country country) {
+    public void setCountry(Country country) {
         this.country = country;
     }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public List<Sight> getSights() {
+        return sights;
+    }
+
 }

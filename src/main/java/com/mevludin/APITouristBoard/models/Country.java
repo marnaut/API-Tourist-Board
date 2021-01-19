@@ -15,23 +15,23 @@ public class Country {
     @Column(nullable = false, unique = true)
     private String countryAbbreviations;
 
+    @Column(nullable = false)
+    private Boolean active = true;
+
     @OneToMany(mappedBy = "country")
     private List<Municipality> municipalityList;
 
 
     public Country() { }
 
-    public Country(String countryName, String countryAbbreviations) {
+    public Country(String countryName, String countryAbbreviations, Boolean active) {
         this.countryName = countryName;
         this.countryAbbreviations = countryAbbreviations;
+        this.active = active;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getCountryName() {
@@ -50,8 +50,15 @@ public class Country {
         this.countryAbbreviations = countryAbbreviations;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     public List<Municipality> getMunicipalityList() {
         return municipalityList;
     }
-
 }
