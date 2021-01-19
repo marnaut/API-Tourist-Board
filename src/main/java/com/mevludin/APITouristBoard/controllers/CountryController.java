@@ -26,7 +26,6 @@ public class CountryController {
     @Autowired
     private CountryService countryService;
 
-
     @GetMapping
     public CollectionModel<EntityModel<Country>> getAllCountries(){
         return countryService.getAllCountries();

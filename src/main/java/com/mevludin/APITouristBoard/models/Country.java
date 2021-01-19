@@ -20,7 +20,7 @@ public class Country {
     private Boolean active = true;
 
     @OneToMany(mappedBy = "country")
-    private Set<Municipality> municipalityList;
+    private List<Municipality> municipalityList;
 
 
     public Country() { }
@@ -59,7 +59,7 @@ public class Country {
         this.active = active;
     }
 
-    public Set<Municipality> getMunicipalityList() {
+    public List<Municipality> getMunicipalityList() {
         return municipalityList;
     }
 
