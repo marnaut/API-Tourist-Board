@@ -3,10 +3,10 @@ package com.mevludin.APITouristBoard.controllers;
 import com.mevludin.APITouristBoard.models.Municipality;
 import com.mevludin.APITouristBoard.services.MunicipalityService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Controller koji omogućava prikaz svih općina za
@@ -22,30 +22,36 @@ import org.springframework.web.bind.annotation.*;
  * PUT azurira podatke o toj opcini
  * */
 @RestController
-@RequestMapping("/api/v1/{countryId}/municipalities")
+@RequestMapping("/api/v1/{parentId}/municipalities")
 public class MunicipalityController {
     @Autowired
     private MunicipalityService municipalityService;
 
     @GetMapping
-    public CollectionModel<EntityModel<Municipality>> getAllMunicipaties(@PathVariable(value = "countryId") Long countryId){
-        return municipalityService.getAllMunicipalities(countryId);
+    public ResponseEntity<List<Municipality>> getAllMunicipalities(@PathVariable(value = "parentId") Long parentId){
+        return municipalityService.getAll(parentId);
     }
 
     @PostMapping
-    public void addMunicipality(@PathVariable(value = "countryId") Long countryId,@RequestBody Municipality municipality){
-        municipalityService.addMunicipality(countryId, municipality);
+    public void addMunicipality(@PathVariable(value = "parentId") Long countryId,@RequestBody Municipality municipality){
+        municipalityService.save(countryId, municipality);
     }
 
     @GetMapping("/{id}")
-    public EntityModel<Municipality> getMunicipality(@PathVariable(value = "id") Long id){
-        return municipalityService.getMunicipality(id);
+    public ResponseEntity<Municipality> getMunicipality(@PathVariable(value = "id") Long id){
+        return municipalityService.getById(id);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Municipality> updateMunicipality(@PathVariable(value = "id") Long id,
                                                            @RequestBody Municipality municipalityDetails){
-        return municipalityService.updateMunicipality(id,municipalityDetails);
+        return municipalityService.updateWhereId(id,municipalityDetails);
+    }
+
+    @GetMapping("/active")
+    @ResponseBody
+    public ResponseEntity<List<Municipality>> getIsActive(@PathVariable(value = "parentId") Long parentId, @RequestParam(name = "active") Boolean active){
+        return municipalityService.getAllWhereActiveIs(parentId, active);
     }
 
 }

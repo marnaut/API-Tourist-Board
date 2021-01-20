@@ -90,7 +90,7 @@ public class Sight {
         this.lon = lon;
     }
 
-    public boolean isActivity() {
+    public boolean getActivity() {
         return activity;
     }
 

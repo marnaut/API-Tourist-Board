@@ -1,11 +1,8 @@
 package com.mevludin.APITouristBoard.controllers;
 
 import com.mevludin.APITouristBoard.models.Country;
-import com.mevludin.APITouristBoard.repositories.CountryRepository;
 import com.mevludin.APITouristBoard.services.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,24 +24,30 @@ public class CountryController {
     private CountryService countryService;
 
     @GetMapping
-    public CollectionModel<EntityModel<Country>> getAllCountries(){
-        return countryService.getAllCountries();
+    public List<Country> getAll(){
+        return countryService.getAll();
     }
 
     @PostMapping
-    public void addCountry(@RequestBody Country country){
-        countryService.addCountry(country);
+    public void save(@RequestBody Country country){
+        countryService.save(country);
     }
 
     @GetMapping("/{id}")
-    public EntityModel<Country> getCountry(@PathVariable("id") Long id){
-        return countryService.getCountryBy(id);
+    public ResponseEntity<Country> getById(@PathVariable("id") Long id){
+        return countryService.getById(id);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Country> updateCountry(@PathVariable(value = "id") Long id,
+    public ResponseEntity<Country> updateWhereId(@PathVariable(value = "id") Long id,
                                                  @RequestBody Country countryDetails){
-        return countryService.updateCountry(id,countryDetails);
+        return countryService.updateWhereId(id,countryDetails);
+    }
+
+    @GetMapping("/active")
+    @ResponseBody
+    public ResponseEntity<List<Country>> getActive(@RequestParam(name = "active") Boolean active){
+        return countryService.getAllWhereActiveIs(active);
     }
 
 
