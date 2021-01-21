@@ -1,8 +1,8 @@
 package com.mevludin.APITouristBoard.services;
 
 import org.springframework.http.ResponseEntity;
+
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Generic interface implemented by ModelService,
