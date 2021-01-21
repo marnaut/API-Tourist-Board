@@ -14,7 +14,7 @@ public class Sight {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String name;
+    private String sightName;
 
     @Column(nullable = false)
     private String description;
@@ -44,8 +44,8 @@ public class Sight {
     public Sight() {
     }
 
-    public Sight(String name, String description, Double lat, Double lon, boolean activity, Importance importance, Municipality municipality) {
-        this.name = name;
+    public Sight(String sightName, String description, Double lat, Double lon, boolean activity, Importance importance, Municipality municipality) {
+        this.sightName = sightName;
         this.description = description;
         this.lat = lat;
         this.lon = lon;
@@ -58,12 +58,12 @@ public class Sight {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getSightName() {
+        return sightName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSightName(String sightName) {
+        this.sightName = sightName;
     }
 
     public String getDescription() {

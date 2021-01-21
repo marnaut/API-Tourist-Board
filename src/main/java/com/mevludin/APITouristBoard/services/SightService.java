@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.SimpleTimeZone;
 import java.util.stream.Collectors;
 
 
@@ -62,7 +61,7 @@ public class SightService  {
         if (!sight.getActivity())
             new EntityNotActiveException(id,"Sight");
         sight.setActivity(sightDetails.getActivity());
-        sight.setName(sight.getName());
+        sight.setSightName(sight.getSightName());
         sight.setDescription(sightDetails.getDescription());
         sight.setLat(sightDetails.getLat());
         sight.setLon(sightDetails.getLon());

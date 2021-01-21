@@ -14,7 +14,7 @@ public class Municipality {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String municipalityName;
 
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -33,7 +33,7 @@ public class Municipality {
     }
 
     public Municipality(String name, Country country, Boolean active) {
-        this.name = name;
+        this.municipalityName = name;
         this.country = country;
         this.active = active;
     }
@@ -43,12 +43,12 @@ public class Municipality {
     }
 
 
-    public String getName() {
-        return name;
+    public String getMunicipalityName() {
+        return municipalityName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMunicipalityName(String municipalityName) {
+        this.municipalityName = municipalityName;
     }
 
     public Country getCountry() {

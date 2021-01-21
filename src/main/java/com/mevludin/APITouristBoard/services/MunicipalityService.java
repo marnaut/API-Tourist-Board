@@ -1,6 +1,5 @@
 package com.mevludin.APITouristBoard.services;
 
-import com.mevludin.APITouristBoard.exceptions.EntityNotActiveException;
 import com.mevludin.APITouristBoard.exceptions.EntityNotFoundException;
 import com.mevludin.APITouristBoard.models.Country;
 import com.mevludin.APITouristBoard.models.Municipality;
@@ -11,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,7 +56,7 @@ public class MunicipalityService implements HaveParentModelInterface<Municipalit
         Municipality municipality = municipalityRepository.findById(id)
                 .orElseThrow(()-> new EntityNotFoundException(id,"Municipality"));
 
-        municipality.setName(municipalityDetails.getName());
+        municipality.setMunicipalityName(municipalityDetails.getMunicipalityName());
         municipality.setActive(municipalityDetails.getActive());
 
         final Municipality updateMunicipality = municipalityRepository.save(municipality);
