@@ -15,7 +15,7 @@ public class Review {
     private Long id;
 
     @Column(nullable = false)
-    private int mark;
+    private int rating;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "sight_id", nullable = false)
@@ -26,8 +26,8 @@ public class Review {
     public Review() {
     }
 
-    public Review(int mark, Sight sight) {
-        this.mark = mark;
+    public Review(int rating, Sight sight) {
+        this.rating = rating;
         this.sight = sight;
     }
 
@@ -35,12 +35,12 @@ public class Review {
         return id;
     }
 
-    public int getMark() {
-        return mark;
+    public int getRating() {
+        return rating;
     }
 
-    public void setMark(int mark) {
-        this.mark = mark;
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
     public Sight getSight() {

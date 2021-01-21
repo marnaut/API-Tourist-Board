@@ -59,4 +59,5 @@ public class SightController {
     public ResponseEntity<Sight> setActivityWhereId(@PathVariable(value = "id") Long id, @RequestParam(required = true, name = "active") Boolean active){
         return sightService.setActivity(id,active);
     }
+
 }
