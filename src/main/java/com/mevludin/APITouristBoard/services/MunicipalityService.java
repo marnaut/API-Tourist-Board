@@ -47,8 +47,8 @@ public class MunicipalityService implements HaveParentModelInterface<Municipalit
     public ResponseEntity<Municipality> getById(Long id) {
         Municipality municipality = municipalityRepository.findByIdAndActivity(id,true);
 
-        if(municipality == null)
-            throw new EntityNotFoundException(id,"Municipality");
+        //if(municipality == null)
+            //throw new EntityNotFoundException(id,"Municipality");
 
         return ResponseEntity.ok(municipality);
     }

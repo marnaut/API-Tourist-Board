@@ -8,10 +8,11 @@ import com.mevludin.APITouristBoard.models.Sight;
 import com.mevludin.APITouristBoard.repositories.ReviewRepository;
 import com.mevludin.APITouristBoard.repositories.SightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.IntSummaryStatistics;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,15 +25,20 @@ public class ReviewService {
     private SightRepository sightRepository;
 
     public ResponseEntity<Review> saveReview(Long id, Review review) {
-        Sight sight = sightRepository.findById(id)
-                .filter(sight1 -> sight1.getActivity())
-                .orElseThrow(() -> new EntityNotFoundException(id,"Sight"));
 
-        review.setSight(sight);
+        if(review.getRating()>0 && review.getRating()<6) {
+            Sight sight = sightRepository.findById(id)
+                    .filter(sight1 -> sight1.getActivity())
+                    .orElseThrow(() -> new EntityNotFoundException(id, "Sight"));
 
-        final Review finalReview = reviewRepository.save(review);
+            review.setSight(sight);
 
-        return ResponseEntity.ok(finalReview);
+            final Review finalReview = reviewRepository.save(review);
+
+            return ResponseEntity.ok(finalReview);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rating must be between 1 and 5");
+        }
     }
 
     public ResponseEntity<List<Review>> getAllReviews(Long id) {
