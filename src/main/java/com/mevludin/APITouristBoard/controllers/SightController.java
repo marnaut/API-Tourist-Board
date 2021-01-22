@@ -52,7 +52,7 @@ public class SightController {
 
     /*
      * Set activity of sight true => /{id}/active?active=true
-     * Set activiy of sight false => /{id}/active?active=false
+     * Set activity of sight false => /{id}/active?active=false
      */
     @PutMapping("/{id}/active")
     public ResponseEntity<Sight> setActivityWhereId(@PathVariable(value = "id") Long id, @RequestParam(required = true, name = "active") Boolean active){
@@ -62,7 +62,6 @@ public class SightController {
     @GetMapping("/search")
     @ResponseBody
     public ResponseEntity<List<Sight>> searchBy(@PathVariable(value = "parentId") Long parentId, @RequestParam(name="importance") Optional<Importance> importance, @RequestParam Optional<String > name){
-
         return sightService.searchBy(parentId,importance, name);
     }
 

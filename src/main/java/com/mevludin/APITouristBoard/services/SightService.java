@@ -8,8 +8,10 @@ import com.mevludin.APITouristBoard.models.Sight;
 import com.mevludin.APITouristBoard.repositories.MunicipalityRepository;
 import com.mevludin.APITouristBoard.repositories.SightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -99,14 +101,17 @@ public class SightService  {
 
     public ResponseEntity<List<Sight>> searchBy(Long parentId, Optional<Importance> importance, Optional<String> name) {
         if(importance.isPresent() && name.isPresent()){
-            return null;
+            List<Sight> sights = sightRepository.findByMunicipalityIdAndSightNameContainingAndImportance(parentId,name,importance);
+            return ResponseEntity.ok(sights);
         } else if (importance.isPresent()){
-
             List<Sight> sights = sightRepository.findByMunicipalityIdAndImportance(parentId,importance);
             return ResponseEntity.ok(sights);
+        } else if (name.isPresent()){
+            List<Sight> sights = sightRepository.findByMunicipalityIdAndSightNameContaining(parentId,name);
+            return ResponseEntity.ok(sights);
         } else {
-            return null;
+            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED,"No parameters like importance or name");
         }
 
-    }
+     }
 }

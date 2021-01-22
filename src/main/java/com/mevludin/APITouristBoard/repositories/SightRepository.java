@@ -12,4 +12,9 @@ import java.util.Optional;
 @Repository
 public interface SightRepository extends JpaRepository<Sight,Long> {
     List<Sight> findByMunicipalityIdAndImportance(Long municipalityId, Optional<Importance> importance);
+
+    List<Sight> findByMunicipalityIdAndSightNameContaining(Long municipalityId, Optional<String> sightName);
+
+    List<Sight> findByMunicipalityIdAndSightNameContainingAndImportance(Long municipalityId, Optional<String> sightName, Optional<Importance> importance);
+
 }
