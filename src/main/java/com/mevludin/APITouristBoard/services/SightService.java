@@ -2,6 +2,7 @@ package com.mevludin.APITouristBoard.services;
 
 import com.mevludin.APITouristBoard.exceptions.EntityNotActiveException;
 import com.mevludin.APITouristBoard.exceptions.EntityNotFoundException;
+import com.mevludin.APITouristBoard.models.Importance;
 import com.mevludin.APITouristBoard.models.Municipality;
 import com.mevludin.APITouristBoard.models.Sight;
 import com.mevludin.APITouristBoard.repositories.MunicipalityRepository;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -93,5 +95,18 @@ public class SightService  {
         final Sight activityChangeOfSight = sightRepository.save(sight);
 
         return ResponseEntity.ok(activityChangeOfSight);
+    }
+
+    public ResponseEntity<List<Sight>> searchBy(Long parentId, Optional<Importance> importance, Optional<String> name) {
+        if(importance.isPresent() && name.isPresent()){
+            return null;
+        } else if (importance.isPresent()){
+
+            List<Sight> sights = sightRepository.findByMunicipalityIdAndImportance(parentId,importance);
+            return ResponseEntity.ok(sights);
+        } else {
+            return null;
+        }
+
     }
 }
