@@ -6,8 +6,10 @@ import com.mevludin.APITouristBoard.models.Municipality;
 import com.mevludin.APITouristBoard.repositories.CountryRepository;
 import com.mevludin.APITouristBoard.repositories.MunicipalityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,56 +24,53 @@ public class MunicipalityService implements HaveParentModelInterface<Municipalit
 
     @Override
     public ResponseEntity<List<Municipality>> getAll(Long countryId) {
-        Country country = countryRepository.findById(countryId)
-                .filter(country1 -> country1.getActive())
-                .orElseThrow(()-> new EntityNotFoundException(countryId,"Country"));
+        List<Municipality> municipalities = municipalityRepository.findByCountryIdAndActivity(countryId,true);
 
-        List<Municipality> municipalities = country.getMunicipalityList().stream()
-                .filter(municipality -> municipality.getActive())
-                .collect(Collectors.toList());
+        if(municipalities.toArray().length == 0)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Municipality is not found or not active");
 
         return ResponseEntity.ok(municipalities);
     }
 
     @Override
-    public void save(Long countryId, Municipality municipality) {
+    public ResponseEntity<Municipality> save(Long countryId, Municipality municipality) {
         Country country = countryRepository.findById(countryId)
                 .orElseThrow(()-> new EntityNotFoundException(countryId,"Country"));
 
         municipality.setCountry(country);
-        municipalityRepository.save(municipality);
+
+        return ResponseEntity.ok(municipalityRepository.save(municipality));
+
     }
 
     @Override
     public ResponseEntity<Municipality> getById(Long id) {
-        Municipality municipality = municipalityRepository.findById(id)
-                .filter(municipality1 -> municipality1.getActive())
-                .orElseThrow(() -> new EntityNotFoundException(id,"Municipality"));
+        Municipality municipality = municipalityRepository.findByIdAndActivity(id,true);
+
+        if(municipality == null)
+            throw new EntityNotFoundException(id,"Municipality");
 
         return ResponseEntity.ok(municipality);
     }
 
     @Override
     public ResponseEntity<Municipality> updateWhereId(Long id, Municipality municipalityDetails) {
-        Municipality municipality = municipalityRepository.findById(id)
-                .orElseThrow(()-> new EntityNotFoundException(id,"Municipality"));
+        Municipality municipality = municipalityRepository.findByIdAndActivity(id,true);
+
+        if(municipality == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Municipality is not found or not active");
 
         municipality.setMunicipalityName(municipalityDetails.getMunicipalityName());
-        municipality.setActive(municipalityDetails.getActive());
+        municipality.setActivity(municipalityDetails.getActivity());
 
-        final Municipality updateMunicipality = municipalityRepository.save(municipality);
-        return ResponseEntity.ok(updateMunicipality);
+        return ResponseEntity.ok(municipalityRepository.save(municipality));
     }
 
     @Override
     public ResponseEntity<List<Municipality>> getAllWhereActiveIs(Long countryId, Boolean active) {
-        Country country = countryRepository.findById(countryId).filter(country1 -> country1.getActive()==true)
-                .filter(country1 -> country1.getActive())
-                .orElseThrow(() -> new EntityNotFoundException(countryId,"Country"));
 
-        List<Municipality> municipalities = country.getMunicipalityList().stream()
-                .filter(municipality -> municipality.getActive()==active)
-                .collect(Collectors.toList());
+        List<Municipality> municipalities = municipalityRepository.findByCountryIdAndActivity(countryId,active);
+
         return ResponseEntity.ok(municipalities);
     }
 }

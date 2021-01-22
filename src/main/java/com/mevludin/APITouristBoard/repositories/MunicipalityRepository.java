@@ -8,4 +8,8 @@ import java.util.List;
 
 @Repository
 public interface MunicipalityRepository extends JpaRepository<Municipality,Long> {
+
+    List<Municipality> findByCountryIdAndActivity(Long countryId, Boolean active);
+
+    Municipality findByIdAndActivity(Long id, Boolean activity);
 }

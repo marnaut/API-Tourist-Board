@@ -17,7 +17,7 @@ public class CountryService {
 
     public List<Country> getAll() {
         List<Country> countries = countryRepository.findAll().stream()
-                .filter(country -> country.getActive())
+                .filter(country -> country.getActivity())
                 .collect(Collectors.toList());
         return countries;
     }
@@ -26,7 +26,7 @@ public class CountryService {
 
         Country country = countryRepository.findById(id).orElseThrow(()-> new EntityNotFoundException(id,"Country"));
 
-        if(!country.getActive())
+        if(!country.getActivity())
             throw new EntityNotActiveException(id,"Country");
 
         return ResponseEntity.ok(country);
@@ -41,7 +41,7 @@ public class CountryService {
     public ResponseEntity<Country> updateWhereId(Long id, Country updatedCountry) {
         Country country = countryRepository.findById(id).orElseThrow(()-> new EntityNotFoundException(id,"Country"));
 
-        country.setActive(updatedCountry.getActive());
+        country.setActivity(updatedCountry.getActivity());
         country.setCountryAbbreviations(updatedCountry.getCountryAbbreviations());
         country.setCountryName(updatedCountry.getCountryName());
 
@@ -51,7 +51,7 @@ public class CountryService {
 
     public ResponseEntity<List<Country>> getAllWhereActiveIs(Boolean active) {
         List<Country> countries = countryRepository.findAll().stream()
-                .filter(country -> country.getActive()==active)
+                .filter(country -> country.getActivity()==active)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(countries);
     }

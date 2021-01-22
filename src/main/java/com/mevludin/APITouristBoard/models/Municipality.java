@@ -24,7 +24,7 @@ public class Municipality {
     private Country country;
 
     @Column(nullable = false)
-    private Boolean active = true;
+    private Boolean activity = true;
 
     @OneToMany(mappedBy = "municipality")
     private List<Sight> sights;
@@ -32,10 +32,10 @@ public class Municipality {
     public Municipality() {
     }
 
-    public Municipality(String name, Country country, Boolean active) {
+    public Municipality(String name, Country country, Boolean activity) {
         this.municipalityName = name;
         this.country = country;
-        this.active = active;
+        this.activity = activity;
     }
 
     public Long getId() {
@@ -59,12 +59,12 @@ public class Municipality {
         this.country = country;
     }
 
-    public Boolean getActive() {
-        return active;
+    public Boolean getActivity() {
+        return activity;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setActivity(Boolean activity) {
+        this.activity = activity;
     }
 
     public List<Sight> getSights() {

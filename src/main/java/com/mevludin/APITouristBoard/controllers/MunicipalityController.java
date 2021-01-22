@@ -27,27 +27,32 @@ public class MunicipalityController {
     @Autowired
     private MunicipalityService municipalityService;
 
+    //Get all active Municipalities where countryId = parentId
     @GetMapping
     public ResponseEntity<List<Municipality>> getAllMunicipalities(@PathVariable(value = "parentId") Long parentId){
         return municipalityService.getAll(parentId);
     }
 
+    //Save new municipality to country where countryId = parentId
     @PostMapping
-    public void addMunicipality(@PathVariable(value = "parentId") Long countryId,@RequestBody Municipality municipality){
-        municipalityService.save(countryId, municipality);
+    public ResponseEntity<Municipality> addMunicipality(@PathVariable(value = "parentId") Long countryId,@RequestBody Municipality municipality){
+        return municipalityService.save(countryId, municipality);
     }
 
+    //Get active municipality where municipalityId = id
     @GetMapping("/{id}")
     public ResponseEntity<Municipality> getMunicipality(@PathVariable(value = "id") Long id){
         return municipalityService.getById(id);
     }
 
+    //Update municipality where municipalityId = id
     @PutMapping("/{id}")
     public ResponseEntity<Municipality> updateMunicipality(@PathVariable(value = "id") Long id,
                                                            @RequestBody Municipality municipalityDetails){
         return municipalityService.updateWhereId(id,municipalityDetails);
     }
 
+    //Get active or inactive municipality, where activity = active value
     @GetMapping("/active")
     @ResponseBody
     public ResponseEntity<List<Municipality>> getIsActive(@PathVariable(value = "parentId") Long parentId, @RequestParam(name = "active") Boolean active){

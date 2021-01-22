@@ -1,5 +1,6 @@
 package com.mevludin.APITouristBoard.services;
 
+import com.mevludin.APITouristBoard.models.Municipality;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -23,8 +24,9 @@ public interface HaveParentModelInterface<E> {
          * Add new element e to database, where parent id = parentId
          * @param parentId = PathVariable
          * @param e
+         * @return
          */
-        void save(Long parentId, E e);
+        ResponseEntity<Municipality> save(Long parentId, E e);
 
 
         /**
