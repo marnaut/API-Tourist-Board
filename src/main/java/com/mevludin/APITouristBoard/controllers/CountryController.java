@@ -20,8 +20,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/countries")
 public class CountryController {
+
+    private final CountryService countryService;
+
     @Autowired
-    private CountryService countryService;
+    public CountryController(CountryService countryService) {
+        this.countryService = countryService;
+    }
 
     @GetMapping
     public List<Country> getAll(){

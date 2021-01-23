@@ -19,8 +19,12 @@ import java.util.Optional;
 @RequestMapping("/api/v1/{parentId}/sights")
 public class SightController {
 
+    private final SightService sightService;
+
     @Autowired
-    private SightService sightService;
+    public SightController(SightService sightService) {
+        this.sightService = sightService;
+    }
 
     //Get All active objects;
     @GetMapping

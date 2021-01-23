@@ -12,8 +12,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/{parentId}/sights/{id}")
 public class ReviewController {
-    @Autowired
+
+
     private ReviewService reviewService;
+
+    @Autowired
+    public ReviewController(ReviewService reviewService) {
+        this.reviewService = reviewService;
+    }
+
     //get all reviews for sight where sight id = id;
     @GetMapping("/reviews")
     public ResponseEntity<List<Review>> getAllReviews(@PathVariable(name = "id") Long id){

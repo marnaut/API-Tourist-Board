@@ -24,8 +24,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/{parentId}/municipalities")
 public class MunicipalityController {
+
+    private final MunicipalityService municipalityService;
+
     @Autowired
-    private MunicipalityService municipalityService;
+    public MunicipalityController(MunicipalityService municipalityService) {
+        this.municipalityService = municipalityService;
+    }
 
     //Get all active Municipalities where countryId = parentId
     @GetMapping
