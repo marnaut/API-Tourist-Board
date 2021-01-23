@@ -29,6 +29,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET,"/api/v1/{municipalityId}/sights/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/api/v1/{municipalityId}/sights/{id}").permitAll()
