@@ -35,7 +35,7 @@ public class SightController {
 
     //Save new sight, where municipalityId = parentId
     @PostMapping
-    public void save(@PathVariable(name = "parentId") Long parentId, @RequestPart Sight sight, @RequestPart MultipartFile file){
+    public void save(@PathVariable(name = "parentId") Long parentId, @RequestPart Sight sight, @RequestPart(required = false) Optional<MultipartFile> file){
         sightService.save(parentId, sight, file);
     }
 
