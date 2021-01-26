@@ -5,7 +5,11 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.util.IntSummaryStatistics;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Entity
 public class Sight {
@@ -32,6 +36,13 @@ public class Sight {
     @Column(nullable = false)
     private Importance importance;
 
+    private Integer numOfReviews;
+
+    private Double rating;
+
+    @OneToMany(mappedBy = "sight")
+    private List<Image> images;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "municipality_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -40,6 +51,8 @@ public class Sight {
 
     @OneToMany(mappedBy = "sight")
     private List<Review> reviews;
+
+
 
     public Sight() {
     }
@@ -53,6 +66,8 @@ public class Sight {
         this.importance = importance;
         this.municipality = municipality;
     }
+
+
 
     public Long getId() {
         return id;
@@ -116,5 +131,34 @@ public class Sight {
 
     public List<Review> getReviews() {
         return reviews;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
+
+    public Integer getNumOfReviews() {
+        return numOfReviews;
+    }
+
+    public void setNumOfReviews(Integer numOfReviews) {
+        this.numOfReviews = numOfReviews;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 }

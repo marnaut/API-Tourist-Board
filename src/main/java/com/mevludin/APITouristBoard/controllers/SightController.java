@@ -4,15 +4,16 @@ import com.mevludin.APITouristBoard.models.Importance;
 import com.mevludin.APITouristBoard.models.Sight;
 import com.mevludin.APITouristBoard.services.SightService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
  * A controller that implements behavior for Sight
- *
  */
 
 @RestController
@@ -26,16 +27,16 @@ public class SightController {
         this.sightService = sightService;
     }
 
-    //Get All active objects;
+    //find all active sights, or filter by importance or filter by name, or filter by name and importance
     @GetMapping
-    public ResponseEntity<List<Sight>> getAll(@PathVariable(name = "parentId") Long parentId){
-        return sightService.getAll(parentId);
+    public ResponseEntity<List<Sight>> getAllWhere(@PathVariable(value = "parentId") Long parentId, @RequestParam(name="importance") Optional<Importance> importance, @RequestParam Optional<String > name){
+        return sightService.getAllWhere(parentId,importance, name);
     }
 
     //Save new sight, where municipalityId = parentId
     @PostMapping
-    public void save(@PathVariable(name = "parentId") Long parentId,@RequestBody Sight sight){
-        sightService.save(parentId, sight);
+    public void save(@PathVariable(name = "parentId") Long parentId, @RequestPart Sight sight, @RequestPart MultipartFile file){
+        sightService.save(parentId, sight, file);
     }
 
     //Get sight by id, where sightId = {id}
@@ -53,7 +54,7 @@ public class SightController {
     //Get all active or inactive sight ?active=true for active ?active=false for inactive
     @GetMapping("/active")
     @ResponseBody
-    public ResponseEntity<List<Sight>> getAllWhereActiveIs(@PathVariable(value = "parentId") Long parentId, @RequestParam(name = "active") Boolean active){
+    public ResponseEntity<List<Sight>> getAllWhereWhereActiveIs(@PathVariable(value = "parentId") Long parentId, @RequestParam(name = "active") Boolean active){
         return sightService.getAllWhereActiveIs(parentId,active);
     }
 
@@ -65,12 +66,6 @@ public class SightController {
     @PutMapping("/{id}/active")
     public ResponseEntity<Sight> setActivityWhereId(@PathVariable(value = "id") Long id, @RequestParam(required = true, name = "active") Boolean active){
         return sightService.setActivity(id,active);
-    }
-    //Search active sight by name or importance or name&importance
-    @GetMapping("/search")
-    @ResponseBody
-    public ResponseEntity<List<Sight>> searchBy(@PathVariable(value = "parentId") Long parentId, @RequestParam(name="importance") Optional<Importance> importance, @RequestParam Optional<String > name){
-        return sightService.searchBy(parentId,importance, name);
     }
 
 }

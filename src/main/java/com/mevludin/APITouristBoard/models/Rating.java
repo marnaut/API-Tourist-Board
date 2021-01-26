@@ -6,6 +6,8 @@ public class Rating {
 
     private Double rating;
 
+    private Integer numOfReviews;
+
     public Rating() {
     }
 
@@ -28,5 +30,13 @@ public class Rating {
 
     public void setRating(Double rating) {
         this.rating = rating;
+    }
+
+    public Integer getNumOfReviews() {
+        return numOfReviews;
+    }
+
+    public void setNumOfReviews(Integer numOfReviews) {
+        this.numOfReviews = numOfReviews;
     }
 }

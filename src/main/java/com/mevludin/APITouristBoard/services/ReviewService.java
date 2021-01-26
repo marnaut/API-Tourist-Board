@@ -1,6 +1,5 @@
 package com.mevludin.APITouristBoard.services;
 
-import ch.qos.logback.core.pattern.util.RegularEscapeUtil;
 import com.mevludin.APITouristBoard.exceptions.EntityNotFoundException;
 import com.mevludin.APITouristBoard.models.Rating;
 import com.mevludin.APITouristBoard.models.Review;
@@ -18,11 +17,17 @@ import java.util.stream.Collectors;
 
 @Service
 public class ReviewService {
-    @Autowired
-    private ReviewRepository reviewRepository;
+
+    private final ReviewRepository reviewRepository;
+
+
+    private final SightRepository sightRepository;
 
     @Autowired
-    private SightRepository sightRepository;
+    public ReviewService(ReviewRepository reviewRepository, SightRepository sightRepository ){
+        this.reviewRepository = reviewRepository;
+        this.sightRepository = sightRepository;
+    }
 
     public ResponseEntity<Review> saveReview(Long id, Review review) {
 
@@ -48,14 +53,17 @@ public class ReviewService {
     }
 
     public ResponseEntity<Rating> getRating(Long sightId) {
-        List<Integer> ratings = reviewRepository.findBySightId(sightId)
-                .stream().map(review -> review.getRating())
-                .collect(Collectors.toList());
+        //calculate rating
+        Double ratingFromReviews = reviewRepository.ratingFromReviews(sightId);
 
-        Double average = ratings.stream().mapToInt((x) -> x)
-                .summaryStatistics().getAverage();
+        //calculate number of reviews
+        Integer numOfReviews = reviewRepository.countBySightId(sightId);
 
-        Rating rating = new Rating(sightId,average);
+        //creating new rating where sightId = sightId, rating = ratingFromReviews
+        Rating rating = new Rating(sightId, ratingFromReviews);
+
+        //set numOfReviews
+        rating.setNumOfReviews(numOfReviews);
 
         return ResponseEntity.ok(rating);
     }

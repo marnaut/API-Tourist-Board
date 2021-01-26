@@ -1,55 +1,122 @@
 package com.mevludin.APITouristBoard.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mevludin.APITouristBoard.controllers.ImageController;
+import com.mevludin.APITouristBoard.exceptions.EntityNotFoundException;
+import com.mevludin.APITouristBoard.models.Image;
 import com.mevludin.APITouristBoard.models.Importance;
 import com.mevludin.APITouristBoard.models.Municipality;
 import com.mevludin.APITouristBoard.models.Sight;
+import com.mevludin.APITouristBoard.repositories.ImageDbRepository;
 import com.mevludin.APITouristBoard.repositories.MunicipalityRepository;
+import com.mevludin.APITouristBoard.repositories.ReviewRepository;
 import com.mevludin.APITouristBoard.repositories.SightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 
 @Service
 public class SightService  {
-    @Autowired
-    private SightRepository sightRepository;
+    public static String uploadDirectory = "C:/Users/Mevludin/Desktop/java/API-Tourist-Board/src/main/resources/image";
+
+
+    private final SightRepository sightRepository;
+
+    private final MunicipalityRepository municipalityRepository;
+
+    private final ReviewRepository reviewRepository;
+
+    private ImageDbRepository imageDbRepository;
 
     @Autowired
-    private MunicipalityRepository municipalityRepository;
+    public SightService(SightRepository sightRepository, MunicipalityRepository municipalityRepository, ReviewRepository reviewRepository, ImageDbRepository imageDbRepository) {
+        this.sightRepository = sightRepository;
+        this.municipalityRepository = municipalityRepository;
+        this.reviewRepository = reviewRepository;
+        this.imageDbRepository = imageDbRepository;
+    }
 
+    //find all active sights, or filter by importance or filter by name, or filter by name and importance
+    public ResponseEntity<List<Sight>> getAllWhere(Long parentId, Optional<Importance> importance, Optional<String> name) {
+        List<Sight> sights;
+        //find active sight by importance and name
+        if(importance.isPresent() && name.isPresent()){
+             sights = sightRepository.findByMunicipalityIdAndSightNameContainingAndImportanceAndActivity(parentId,name,importance,true);
+        } else if (importance.isPresent()){
+            //find active sight by importance
+            sights = sightRepository.findByMunicipalityIdAndImportanceAndActivity(parentId,importance,true);
+        } else if (name.isPresent()){
+            //find active sight by name
+            sights = sightRepository.findByMunicipalityIdAndSightNameContainingAndActivity(parentId,name,true);
+        } else {
+            //Find all active sights by municipalityId
+            sights = sightRepository.findByMunicipalityIdAndActivity(parentId,true);
 
-    public ResponseEntity<List<Sight>> getAll(Long parentId) {
-        //Find all active sights by municipalityId
-        List<Sight> activeSights = sightRepository.findByMunicipalityIdAndActivity(parentId,true);
+            if(sights.toArray().length == 0)
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sights not found, or municipality is not active");
+        }
 
-        if(activeSights.toArray().length == 0)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sights not found, or municipality is not active");
+        return ResponseEntity.ok(sights);
 
-        return ResponseEntity.ok(activeSights);
     }
 
     //Save new Sight, where municipalityId = parentId
-    public ResponseEntity<Sight> save(Long parentId, Sight sight) {
+    public ResponseEntity<Sight> save(Long parentId, Sight sight, MultipartFile file) {
+
         Municipality municipality = municipalityRepository.findById(parentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Municipality by id: "+ parentId+" not found"));
 
         sight.setMunicipality(municipality);
+        System.out.println(sight.getSightName()+" " + sight.getActivity()+ " "  + sight.getLat()+ " " + file.getName());
+        sightRepository.save(sight);
+        try {
+            Sight newSight = sightRepository.findById(sight.getId()).orElseThrow(() -> new EntityNotFoundException(sight.getId(),"Sight"));
 
-        return ResponseEntity.ok(sightRepository.save(sight));
+            File convertFile = new File(new StringBuilder().append(uploadDirectory).append("/").toString().concat(file.getOriginalFilename()).toString());
+            convertFile.createNewFile();
+            FileOutputStream fout = new FileOutputStream(convertFile);
+            fout.write(file.getBytes());
+            Image image = new Image();
+            image.setImageName(convertFile.getName());
+            image.setImagePath(convertFile.getAbsolutePath());
+            image.setSight(newSight);
+            fout.close();
+            imageDbRepository.save(image);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return ResponseEntity.ok(sight);
+
     }
 
     //GET active sight, where sightId = id
     public ResponseEntity<Sight> getById(Long id) {
+
         Sight sight = sightRepository.findByIdAndActivity(id, true);
 
         if(sight == null)
          throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Sight by id: "+ id +" not found or not active");
+
+        //get number of reviews
+        Integer numOfReviews = reviewRepository.countBySightId(id);
+
+        //get rating
+        Double rating = reviewRepository.ratingFromReviews(id);
+
+        sight.setRating(rating);
+        sight.setNumOfReviews(numOfReviews);
 
         return ResponseEntity.ok(sight);
     }
@@ -89,23 +156,4 @@ public class SightService  {
         return ResponseEntity.ok(sightRepository.save(sight));
     }
 
-    //Search by name or importance or name & importance
-    public ResponseEntity<List<Sight>> searchBy(Long parentId, Optional<Importance> importance, Optional<String> name) {
-        //find active sight by importance and name
-        if(importance.isPresent() && name.isPresent()){
-            List<Sight> sights = sightRepository.findByMunicipalityIdAndSightNameContainingAndImportanceAndActivity(parentId,name,importance,true);
-            return ResponseEntity.ok(sights);
-        } else if (importance.isPresent()){
-            //find active sight by importance
-            List<Sight> sights = sightRepository.findByMunicipalityIdAndImportanceAndActivity(parentId,importance,true);
-            return ResponseEntity.ok(sights);
-        } else if (name.isPresent()){
-            //find active sight by name
-            List<Sight> sights = sightRepository.findByMunicipalityIdAndSightNameContainingAndActivity(parentId,name,true);
-            return ResponseEntity.ok(sights);
-        } else {
-            throw new ResponseStatusException(HttpStatus.METHOD_NOT_ALLOWED,"No parameters like importance or name");
-        }
-
-     }
 }
