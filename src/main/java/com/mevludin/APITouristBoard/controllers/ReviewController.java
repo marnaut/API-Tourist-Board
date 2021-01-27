@@ -20,6 +20,11 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
+    //get all reviews for sight where sight id = id;
+    @GetMapping("/reviews")
+    public ResponseEntity<List<Review>> getAllReviews(@PathVariable(name = "id") Long id){
+        return reviewService.getAllReviews(id);
+    }
 
     //save new review for sight where sight id = id
     @PostMapping
