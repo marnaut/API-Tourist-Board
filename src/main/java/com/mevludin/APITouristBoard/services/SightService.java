@@ -1,6 +1,5 @@
 package com.mevludin.APITouristBoard.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mevludin.APITouristBoard.controllers.ImageController;
 import com.mevludin.APITouristBoard.exceptions.EntityNotFoundException;
 import com.mevludin.APITouristBoard.models.Image;
