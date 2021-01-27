@@ -47,7 +47,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic();
     }
 
-
+    //In memory users
     @Override
     @Bean
     protected UserDetailsService userDetailsService() {

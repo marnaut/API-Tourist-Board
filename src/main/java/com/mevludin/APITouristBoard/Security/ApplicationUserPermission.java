@@ -2,9 +2,7 @@ package com.mevludin.APITouristBoard.Security;
 
 public enum ApplicationUserPermission {
     EDITOR_READ("editor:read"),
-    EDITOR_WRITE("editor:write"),
-    VISITOR_READ("visitor:read"),
-    VISITOR_WRITE("visitor:write");
+    EDITOR_WRITE("editor:write");
 
 
     private final  String permission;
