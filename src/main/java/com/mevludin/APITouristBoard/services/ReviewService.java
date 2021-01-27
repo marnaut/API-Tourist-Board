@@ -50,19 +50,4 @@ public class ReviewService {
         return ResponseEntity.ok(reviews);
     }
 
-    public ResponseEntity<Rating> getRating(Long sightId) {
-        //calculate rating
-        Double ratingFromReviews = reviewRepository.ratingFromReviews(sightId);
-
-        //calculate number of reviews
-        Integer numOfReviews = reviewRepository.countBySightId(sightId);
-
-        //creating new rating where sightId = sightId, rating = ratingFromReviews
-        Rating rating = new Rating(sightId, ratingFromReviews);
-
-        //set numOfReviews
-        rating.setNumOfReviews(numOfReviews);
-
-        return ResponseEntity.ok(rating);
-    }
 }

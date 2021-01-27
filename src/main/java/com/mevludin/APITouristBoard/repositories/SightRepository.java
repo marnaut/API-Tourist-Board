@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface SightRepository extends JpaRepository<Sight,Long> {
     List<Sight> findByMunicipalityIdAndActivity(Long municipalityId, Boolean activity);
 
-    Sight findByIdAndActivity(Long id, Boolean activity);
+    Optional<Sight> findByIdAndActivity(Long id, Boolean activity);
 
     List<Sight> findByMunicipalityIdAndImportanceAndActivity(Long municipalityId, Optional<Importance> importance, Boolean activity);
 

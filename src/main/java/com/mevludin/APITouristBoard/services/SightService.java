@@ -116,10 +116,10 @@ public class SightService  {
     //GET active sight, where sightId = id
     public ResponseEntity<Sight> getById(Long id) {
 
-        Sight sight = sightRepository.findByIdAndActivity(id, true);
-
-        if(sight == null)
-         throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Sight by id: "+ id +" not found or not active");
+        Sight sight = sightRepository.findByIdAndActivity(id, true)
+                .orElseThrow(() -> {
+                    return new ResponseStatusException(HttpStatus.NOT_FOUND, "Sight by id: " + id + " not found or not active");
+                });
 
         //get number of reviews
         Integer numOfReviews = reviewRepository.countBySightId(id);
