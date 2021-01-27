@@ -27,28 +27,29 @@ public class CountryController {
     public CountryController(CountryService countryService) {
         this.countryService = countryService;
     }
-
+    //Get all active countries
     @GetMapping
-    public List<Country> getAll(){
+    public ResponseEntity<List<Country>> getAll(){
         return countryService.getAll();
     }
-
+    //Save new country
     @PostMapping
     public void save(@RequestBody Country country){
         countryService.save(country);
     }
-
+    //Get country by id
     @GetMapping("/{id}")
     public ResponseEntity<Country> getById(@PathVariable("id") Long id){
         return countryService.getById(id);
     }
-
+    //Update country where countryId = id
     @PutMapping("/{id}")
     public ResponseEntity<Country> updateWhereId(@PathVariable(value = "id") Long id,
                                                  @RequestBody Country countryDetails){
         return countryService.updateWhereId(id,countryDetails);
     }
-
+    //Get all active countries where activity = true,  for active
+    //Get all inactive countries, where activity = false
     @GetMapping("/active")
     @ResponseBody
     public ResponseEntity<List<Country>> getActive(@RequestParam(name = "active") Boolean active){
