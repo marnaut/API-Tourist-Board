@@ -5,11 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MunicipalityRepository extends JpaRepository<Municipality,Long> {
 
     List<Municipality> findByCountryIdAndActivity(Long countryId, Boolean active);
 
-    Municipality findByIdAndActivity(Long id, Boolean activity);
+    Optional<Municipality>  findByIdAndActivity(Long id, Boolean activity);
 }

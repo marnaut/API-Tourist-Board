@@ -45,20 +45,16 @@ public class MunicipalityService implements HaveParentModelInterface<Municipalit
 
     @Override
     public ResponseEntity<Municipality> getById(Long id) {
-        Municipality municipality = municipalityRepository.findByIdAndActivity(id,true);
-
-        //if(municipality == null)
-            //throw new EntityNotFoundException(id,"Municipality");
+        Municipality municipality = municipalityRepository.findByIdAndActivity(id,true)
+                .orElseThrow(()-> new EntityNotFoundException(id,"Municipality"));
 
         return ResponseEntity.ok(municipality);
     }
 
     @Override
     public ResponseEntity<Municipality> updateWhereId(Long id, Municipality municipalityDetails) {
-        Municipality municipality = municipalityRepository.findByIdAndActivity(id,true);
-
-        if(municipality == null)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Municipality is not found or not active");
+        Municipality municipality = municipalityRepository.findByIdAndActivity(id,true)
+                .orElseThrow(()-> new EntityNotFoundException(id,"Municipality"));
 
         municipality.setMunicipalityName(municipalityDetails.getMunicipalityName());
         municipality.setActivity(municipalityDetails.getActivity());
