@@ -27,8 +27,6 @@ import java.util.Optional;
 
 @Service
 public class SightService  {
-    public static String uploadDirectory = "C:/Users/Mevludin/Desktop/java/API-Tourist-Board/src/main/resources/image";
-
 
     private final SightRepository sightRepository;
 
@@ -71,31 +69,45 @@ public class SightService  {
     }
 
     //Save new Sight, where municipalityId = parentId
-    public ResponseEntity<Sight> save(Long parentId, Sight sight, MultipartFile file) {
+    public ResponseEntity<Sight> save(Long parentId, Sight sight, Optional<MultipartFile> file) {
 
         Municipality municipality = municipalityRepository.findById(parentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Municipality by id: "+ parentId+" not found"));
 
         sight.setMunicipality(municipality);
-        System.out.println(sight.getSightName()+" " + sight.getActivity()+ " "  + sight.getLat()+ " " + file.getName());
+
         sightRepository.save(sight);
-        try {
-            Sight newSight = sightRepository.findById(sight.getId()).orElseThrow(() -> new EntityNotFoundException(sight.getId(),"Sight"));
 
-            File convertFile = new File(new StringBuilder().append(uploadDirectory).append("/").toString().concat(file.getOriginalFilename()).toString());
-            convertFile.createNewFile();
-            FileOutputStream fout = new FileOutputStream(convertFile);
-            fout.write(file.getBytes());
-            Image image = new Image();
-            image.setImageName(convertFile.getName());
-            image.setImagePath(convertFile.getAbsolutePath());
-            image.setSight(newSight);
-            fout.close();
-            imageDbRepository.save(image);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //if image is present, save image
+        if(file.isPresent())
 
+            try {
+                Sight newSight = sightRepository.findById(sight.getId()).orElseThrow(() -> new EntityNotFoundException(sight.getId(),"Sight"));
+                //create folder, if not exists, for store images of sight.getSights
+                boolean newDirectory = new File(ImageController.uploadDirectory,sight.getSightName()).mkdir();
+
+                //create new file for store image file.
+                File convertFile = new File(new StringBuilder()
+                        .append(ImageController.uploadDirectory)
+                        .append("/")
+                        .append(sight.getSightName())
+                        .append("/")
+                        .toString()
+                        .concat(file.get().getOriginalFilename()));
+
+                convertFile.createNewFile();
+                FileOutputStream fout = new FileOutputStream(convertFile);
+                fout.write(file.get().getBytes());
+                Image image = new Image();
+
+                image.setImageName(convertFile.getName());
+                image.setImagePath(convertFile.getAbsolutePath());
+                image.setSight(newSight);
+                fout.close();
+                imageDbRepository.save(image);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         return ResponseEntity.ok(sight);
 
