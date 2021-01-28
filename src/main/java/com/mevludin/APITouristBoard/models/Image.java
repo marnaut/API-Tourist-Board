@@ -46,6 +46,11 @@ public class Image {
         this.imagePath = imagePath;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+
     public String getImageName() {
         return imageName;
     }
