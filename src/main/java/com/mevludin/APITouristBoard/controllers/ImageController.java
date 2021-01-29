@@ -1,15 +1,10 @@
 package com.mevludin.APITouristBoard.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mevludin.APITouristBoard.exceptions.EntityNotFoundException;
 import com.mevludin.APITouristBoard.models.Image;
-import com.mevludin.APITouristBoard.models.Sight;
 import com.mevludin.APITouristBoard.repositories.ImageDbRepository;
 import com.mevludin.APITouristBoard.repositories.SightRepository;
-import org.aspectj.bridge.Message;
+import com.mevludin.APITouristBoard.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,47 +13,29 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/{municipalityId}/sights/{id}")
 public class ImageController {
 
-    public static String uploadDirectory = "./images";
-
     private final ImageDbRepository imageDbRepository;
 
     private final SightRepository sightRepository;
 
+    private final ImageService imageService;
+
     @Autowired
-    public ImageController(ImageDbRepository imageDbRepository, SightRepository sightRepository) {
+    public ImageController(ImageDbRepository imageDbRepository, SightRepository sightRepository, ImageService imageService) {
         this.imageDbRepository = imageDbRepository;
         this.sightRepository = sightRepository;
+        this.imageService = imageService;
     }
 
     @PostMapping(value="/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Image> uploadFile(@PathVariable Long id, @RequestParam(required=true, value="file") MultipartFile file) throws IOException  {
-        Sight sight = sightRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(id,"Sight"));
-
-        //create new directory by sight name, if not exist, to images
-        boolean newDirectory = new File(uploadDirectory,sight.getSightName()).mkdir();
-
-        File convertFile = new File(new StringBuilder().append(uploadDirectory).append("/").append(sight.getSightName()).append("/").toString().concat(file.getOriginalFilename()).toString());
-
-        convertFile.createNewFile();
-        FileOutputStream fout = new FileOutputStream(convertFile);
-            fout.write(file.getBytes());
-            Image image = new Image();
-            image.setImageName(convertFile.getName());
-            image.setImagePath(convertFile.getAbsolutePath());
-            image.setSight(sight);
-        fout.close();
-
-        return ResponseEntity.ok(imageDbRepository.save(image));
+    public ResponseEntity<List<Image>> uploadFile(@PathVariable Long id, @RequestParam(required=true, value="file") List<MultipartFile> multipartFiles) throws IOException  {
+        return  imageService.uploadFile(id,multipartFiles);
     }
 
     //Delete image by id of sight where sightId = id. Also delete i image file from system file.
