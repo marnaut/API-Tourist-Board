@@ -29,6 +29,7 @@ public class SightWithRating extends Sight{
         this.images = sight.images;
         this.municipality = sight.municipality;
         this.description = sight.description;
+        this.reviews = sight.reviews;
     }
 
     public Integer getNumOfReviews() {

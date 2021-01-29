@@ -31,13 +31,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-
+                //for any visitor
                 .antMatchers(HttpMethod.GET,"/api/v1/{municipalityId}/sights/**").permitAll()
                 .antMatchers(HttpMethod.POST,"/api/v1/{municipalityId}/sights/{id}").permitAll()
-
+                //for editor and admin
                 .antMatchers(HttpMethod.POST,"/api/v1/{municipalityId}/sights/**").hasAnyRole(EDITOR.name(),ADMIN.name())
                 .antMatchers(HttpMethod.PUT,"/api/v1/{municipalityId}/sights/**").hasAnyRole(EDITOR.name(),ADMIN.name())
-
+                .antMatchers(HttpMethod.DELETE,"/api/v1/{municipalityId}/sights/{id}/delete/{photoId}").hasAnyRole(EDITOR.name(),ADMIN.name())
+                //for admin
                 .antMatchers("/api/v1/**").hasRole(ADMIN.name())
 
 

@@ -2,6 +2,7 @@ package com.mevludin.APITouristBoard.controllers;
 
 import com.mevludin.APITouristBoard.models.Importance;
 import com.mevludin.APITouristBoard.models.Sight;
+import com.mevludin.APITouristBoard.models.SightWithRating;
 import com.mevludin.APITouristBoard.services.SightService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -29,7 +30,7 @@ public class SightController {
 
     //find all active sights, or filter by importance or filter by name, or filter by name and importance
     @GetMapping
-    public ResponseEntity<List<Sight>> getAllWhere(@PathVariable(value = "parentId") Long parentId, @RequestParam(name="importance") Optional<Importance> importance, @RequestParam Optional<String > name){
+    public ResponseEntity<List<SightWithRating>> getAllWhere(@PathVariable(value = "parentId") Long parentId, @RequestParam(name="importance") Optional<Importance> importance, @RequestParam Optional<String > name){
         return sightService.getAllWhere(parentId,importance, name);
     }
 

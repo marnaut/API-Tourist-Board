@@ -41,12 +41,6 @@ public class ImageController {
     //Delete image by id of sight where sightId = id. Also delete i image file from system file.
     @DeleteMapping("/delete/{imageId}")
     public void deleteById(@PathVariable("imageId") Long id){
-        Image imageToDelete = imageDbRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Image by id = "+id+" not found!"));
-
-        File fileToDelete = new File(imageToDelete.getImagePath());
-        boolean success = fileToDelete.delete();
-
-        imageDbRepository.deleteById(id);
+        imageService.deleteImageById(id);
     }
 }

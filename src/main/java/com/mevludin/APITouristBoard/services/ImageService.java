@@ -79,4 +79,14 @@ public class ImageService {
 
         return images;
     }
+
+    public void deleteImageById(Long id) {
+        Image imageToDelete = imageDbRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Image by id = "+id+" not found!"));
+
+        File fileToDelete = new File(imageToDelete.getImagePath());
+        boolean success = fileToDelete.delete();
+
+        imageDbRepository.deleteById(id);
+    }
 }

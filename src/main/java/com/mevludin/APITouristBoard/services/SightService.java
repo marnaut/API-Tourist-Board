@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -40,7 +41,7 @@ public class SightService  {
     }
 
     //find all active sights, or filter by importance or filter by name, or filter by name and importance
-    public ResponseEntity<List<Sight>> getAllWhere(Long parentId, Optional<Importance> importance, Optional<String> name) {
+    public ResponseEntity<List<SightWithRating>> getAllWhere(Long parentId, Optional<Importance> importance, Optional<String> name) {
         List<Sight> sights;
         //find active sight by importance and name
         if(importance.isPresent() && name.isPresent()){
@@ -59,7 +60,16 @@ public class SightService  {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sights not found, or municipality is not active");
         }
 
-        return ResponseEntity.ok(sights);
+        List<SightWithRating> sightWithRatingList = sights.stream()
+                .map(sight -> {
+                SightWithRating sightWithRating = new SightWithRating(sight);
+                sightWithRating.setRating(reviewRepository.ratingFromReviews(sight.getId()));
+                sightWithRating.setNumOfReviews(reviewRepository.countBySightId(sight.getId()));
+
+                return sightWithRating;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(sightWithRatingList);
 
     }
 
@@ -98,7 +108,7 @@ public class SightService  {
                 .orElseThrow(() -> {
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Sight by id: " + id + " not found or not active");
                 });
-
+        //SightWithRating for display rating and numOfReviews
         SightWithRating withRating = new SightWithRating(sight);
         //get number of reviews
         Integer numOfReviews = reviewRepository.countBySightId(id);
