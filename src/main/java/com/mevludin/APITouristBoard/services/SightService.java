@@ -1,11 +1,7 @@
 package com.mevludin.APITouristBoard.services;
 
-import com.mevludin.APITouristBoard.controllers.ImageController;
 import com.mevludin.APITouristBoard.exceptions.EntityNotFoundException;
-import com.mevludin.APITouristBoard.models.Image;
-import com.mevludin.APITouristBoard.models.Importance;
-import com.mevludin.APITouristBoard.models.Municipality;
-import com.mevludin.APITouristBoard.models.Sight;
+import com.mevludin.APITouristBoard.models.*;
 import com.mevludin.APITouristBoard.repositories.ImageDbRepository;
 import com.mevludin.APITouristBoard.repositories.MunicipalityRepository;
 import com.mevludin.APITouristBoard.repositories.ReviewRepository;
@@ -17,9 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,13 +26,16 @@ public class SightService  {
 
     private final ReviewRepository reviewRepository;
 
+    private final ImageService imageService;
+
     private ImageDbRepository imageDbRepository;
 
     @Autowired
-    public SightService(SightRepository sightRepository, MunicipalityRepository municipalityRepository, ReviewRepository reviewRepository, ImageDbRepository imageDbRepository) {
+    public SightService(SightRepository sightRepository, MunicipalityRepository municipalityRepository, ReviewRepository reviewRepository, ImageService imageService, ImageDbRepository imageDbRepository) {
         this.sightRepository = sightRepository;
         this.municipalityRepository = municipalityRepository;
         this.reviewRepository = reviewRepository;
+        this.imageService = imageService;
         this.imageDbRepository = imageDbRepository;
     }
 
@@ -68,7 +64,7 @@ public class SightService  {
     }
 
     //Save new Sight, where municipalityId = parentId
-    public ResponseEntity<Sight> save(Long parentId, Sight sight, Optional<MultipartFile> file) {
+    public String save(Long parentId, Sight sight, Optional<List<MultipartFile>> file) {
 
         Municipality municipality = municipalityRepository.findById(parentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Municipality by id: "+ parentId+" not found"));
@@ -78,37 +74,20 @@ public class SightService  {
         sightRepository.save(sight);
 
         //if image is present, save image
-        if(file.isPresent())
+        if(file.isPresent()){
 
-            try {
-                Sight newSight = sightRepository.findById(sight.getId()).orElseThrow(() -> new EntityNotFoundException(sight.getId(),"Sight"));
-                //create folder, if not exists, for store images of sight.getSights
-                boolean newDirectory = new File(ImageController.uploadDirectory,sight.getSightName()).mkdir();
+            Sight newSight = sightRepository.findById(sight.getId()).orElseThrow(() -> new EntityNotFoundException(sight.getId(),"Sight"));
 
-                //create new file for store image file.
-                File convertFile = new File(new StringBuilder()
-                        .append(ImageController.uploadDirectory)
-                        .append("/")
-                        .append(sight.getSightName())
-                        .append("/")
-                        .toString()
-                        .concat(file.get().getOriginalFilename()));
+            List<Image> images = imageService.multipartListToImageList(newSight,file.get());
 
-                convertFile.createNewFile();
-                FileOutputStream fout = new FileOutputStream(convertFile);
-                fout.write(file.get().getBytes());
-                Image image = new Image();
+            sight.setImages(images);
 
-                image.setImageName(convertFile.getName());
-                image.setImagePath(convertFile.getAbsolutePath());
-                image.setSight(newSight);
-                fout.close();
-                imageDbRepository.save(image);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            imageDbRepository.saveAll(images);
+        }
 
-        return ResponseEntity.ok(sight);
+
+
+        return "Saved!";
 
     }
 
@@ -120,16 +99,17 @@ public class SightService  {
                     return new ResponseStatusException(HttpStatus.NOT_FOUND, "Sight by id: " + id + " not found or not active");
                 });
 
+        SightWithRating withRating = new SightWithRating(sight);
         //get number of reviews
         Integer numOfReviews = reviewRepository.countBySightId(id);
 
         //get rating
         Double rating = reviewRepository.ratingFromReviews(id);
 
-        sight.setRating(rating);
-        sight.setNumOfReviews(numOfReviews);
+        withRating.setRating(rating);
+        withRating.setNumOfReviews(numOfReviews);
 
-        return ResponseEntity.ok(sight);
+        return ResponseEntity.ok(withRating);
     }
 
     //Update Sight where sightId = id, set details of sight to sightDetails object

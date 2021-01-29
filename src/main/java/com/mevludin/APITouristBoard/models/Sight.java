@@ -3,54 +3,46 @@ package com.mevludin.APITouristBoard.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import java.util.IntSummaryStatistics;
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+
 
 @Entity
 public class Sight {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @Column(nullable = false, unique = true)
-    private String sightName;
+    public Long id;
 
     @Column(nullable = false)
-    private String description;
+    String sightName;
+
+    @Column(nullable = false)
+    String description;
 
     //Location lat&lon
     @Column(nullable = false)
-    private Double lat;
+    Double lat;
 
     @Column(nullable = false)
-    private Double lon;
+    Double lon;
 
     @Column(nullable = false)
-    private boolean activity;
+    boolean activity;
 
     @Column(nullable = false)
-    private Importance importance;
-
-    private Integer numOfReviews;
-
-    private Double rating;
+    Importance importance;
 
     @OneToMany(mappedBy = "sight")
-    private List<Image> images;
+    List<Image> images;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "municipality_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
-    private Municipality municipality;
+    Municipality municipality;
 
     @OneToMany(mappedBy = "sight")
-    private List<Review> reviews;
+    List<Review> reviews;
 
 
 
@@ -139,23 +131,6 @@ public class Sight {
 
     public void setImages(List<Image> images) {
         this.images = images;
-    }
-
-
-    public Integer getNumOfReviews() {
-        return numOfReviews;
-    }
-
-    public void setNumOfReviews(Integer numOfReviews) {
-        this.numOfReviews = numOfReviews;
-    }
-
-    public Double getRating() {
-        return rating;
-    }
-
-    public void setRating(Double rating) {
-        this.rating = rating;
     }
 
     public void setReviews(List<Review> reviews) {
