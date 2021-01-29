@@ -27,7 +27,7 @@ public class CountryController {
     public CountryController(CountryService countryService) {
         this.countryService = countryService;
     }
-    //Get all active countries
+    //Get all countries
     @GetMapping
     public ResponseEntity<List<Country>> getAll(){
         return countryService.getAll();

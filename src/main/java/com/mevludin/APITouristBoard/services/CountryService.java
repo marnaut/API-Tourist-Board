@@ -16,17 +16,14 @@ public class CountryService {
     private CountryRepository countryRepository;
 
     public ResponseEntity<List<Country>> getAll() {
-        List<Country> countries = countryRepository.findByActivity(true);
+        List<Country> countries = countryRepository.findAll();
 
         return ResponseEntity.ok(countries);
     }
 
     public ResponseEntity<Country> getById(Long id) {
 
-        Country country = countryRepository.findById(id).orElseThrow(()-> new EntityNotFoundException(id,"Country"));
-
-        if(!country.getActivity())
-            throw new EntityNotActiveException(id,"Country");
+        Country country = countryRepository.findByIdAndActivity(id,true).orElseThrow(()-> new EntityNotFoundException(id,"Country"));
 
         return ResponseEntity.ok(country);
     }
@@ -44,8 +41,7 @@ public class CountryService {
         country.setCountryAbbreviations(updatedCountry.getCountryAbbreviations());
         country.setCountryName(updatedCountry.getCountryName());
 
-        final Country updatedCounty = countryRepository.save(country);
-        return ResponseEntity.ok(updatedCountry);
+        return ResponseEntity.ok(countryRepository.save(country));
     }
 
     public ResponseEntity<List<Country>> getAllWhereActiveIs(Boolean active) {
