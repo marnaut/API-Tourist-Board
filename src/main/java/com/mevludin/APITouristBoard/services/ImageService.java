@@ -1,9 +1,13 @@
 package com.mevludin.APITouristBoard.services;
 
 import com.mevludin.APITouristBoard.exceptions.EntityNotFoundException;
+import com.mevludin.APITouristBoard.models.Country;
 import com.mevludin.APITouristBoard.models.Image;
+import com.mevludin.APITouristBoard.models.Municipality;
 import com.mevludin.APITouristBoard.models.Sight;
+import com.mevludin.APITouristBoard.repositories.CountryRepository;
 import com.mevludin.APITouristBoard.repositories.ImageDbRepository;
+import com.mevludin.APITouristBoard.repositories.MunicipalityRepository;
 import com.mevludin.APITouristBoard.repositories.SightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,10 +33,16 @@ public class ImageService {
 
     private final SightRepository sightRepository;
 
+    private final MunicipalityRepository municipalityRepository;
+
+    private final CountryRepository countryRepository;
+
     @Autowired
-    public ImageService(ImageDbRepository imageDbRepository, SightRepository sightRepository) {
+    public ImageService(ImageDbRepository imageDbRepository, SightRepository sightRepository, MunicipalityRepository municipalityRepository, CountryRepository countryRepository) {
         this.imageDbRepository = imageDbRepository;
         this.sightRepository = sightRepository;
+        this.municipalityRepository = municipalityRepository;
+        this.countryRepository = countryRepository;
     }
 
     public ResponseEntity<List<Image>> uploadFile(@PathVariable Long id, @RequestParam(value="file") List<MultipartFile> multipartFiles) throws IOException {
@@ -48,16 +58,30 @@ public class ImageService {
     public List<Image> multipartListToImageList(Sight sight, List<MultipartFile> multipartFiles) {
 
         //create new directory by sight name, if not exist, to images directory, for storing images of sight-name
-        boolean newDirectory = new File(UPLOAD_DIRECTORY,sight.getSightName()).mkdir();
+        Municipality municipality = municipalityRepository.findById(sight.getMunicipality().getId()).get();
+
+        Country country = countryRepository.findById(municipality.getCountry().getId()).get();
+
+        //Creating a directory to save images of each sight of municipality of country
+        boolean newDirectory = new File(UPLOAD_DIRECTORY+"/"+
+                country.getCountryName()+
+                "/"+
+                municipality.getMunicipalityName(),
+                sight.getSightName())
+                .mkdir();
 
         //Get list of images from multipartFiles
         List<Image> images = multipartFiles.stream().map(file -> {
             //Create new empty Image object
             Image image = new Image();
 
-            //Create converted file to /image/sight-name/file-name
+            //Create converted file to /image/country/municipality/sight-name/file-name
             File convertFile = new File(new StringBuilder()
                     .append(ImageService.UPLOAD_DIRECTORY)
+                    .append("/")
+                    .append(country.getCountryName())
+                    .append("/")
+                    .append(municipality.getMunicipalityName())
                     .append("/")
                     .append(sight.getSightName())
                     .append("/")

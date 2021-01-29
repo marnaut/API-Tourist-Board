@@ -7,6 +7,8 @@ import com.mevludin.APITouristBoard.repositories.CountryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
 import java.util.List;
 
 @Service
@@ -30,6 +32,9 @@ public class CountryService {
 
     //POST: Dodavanje nove drzave
     public void save(Country country) {
+        //Creating a directory to save images of each country
+        boolean newDirectory = new File(ImageService.UPLOAD_DIRECTORY,country.getCountryName()).mkdir();
+
         countryRepository.save(country);
     }
 

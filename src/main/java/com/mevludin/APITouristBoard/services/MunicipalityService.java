@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,10 @@ public class MunicipalityService implements HaveParentModelInterface<Municipalit
                 .orElseThrow(()-> new EntityNotFoundException(countryId,"Country"));
 
         municipality.setCountry(country);
+
+        //Creating a directory to save images of each municipality
+        boolean newDirectory = new File(ImageService.UPLOAD_DIRECTORY+"/"+country.getCountryName()
+                ,municipality.getMunicipalityName()).mkdir();
 
         return ResponseEntity.ok(municipalityRepository.save(municipality));
 
