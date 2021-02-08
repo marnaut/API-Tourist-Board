@@ -27,7 +27,7 @@ public class ReviewService {
         this.sightRepository = sightRepository;
     }
 
-    public ResponseEntity<Review> saveReview(Long id, Review review) {
+    public Review saveReview(Long id, Review review) {
 
         if(review.getRating()>0 && review.getRating()<6) {
             Sight sight = sightRepository.findById(id)
@@ -38,16 +38,16 @@ public class ReviewService {
 
             final Review finalReview = reviewRepository.save(review);
 
-            return ResponseEntity.ok(finalReview);
+            return finalReview;
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rating must be between 1 and 5");
         }
     }
 
-    public ResponseEntity<List<Review>> getAllReviews(Long id) {
+    public List<Review> getAllReviews(Long id) {
         List<Review> reviews = reviewRepository.findBySightId(id);
 
-        return ResponseEntity.ok(reviews);
+        return reviews;
     }
 
 }
