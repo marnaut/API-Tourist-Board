@@ -30,7 +30,7 @@ public class CountryController {
     //Get all countries
     @GetMapping
     public ResponseEntity<List<Country>> getAll(){
-        return countryService.getAll();
+        return ResponseEntity.ok(countryService.getAll());
     }
     //Save new country
     @PostMapping
@@ -40,7 +40,7 @@ public class CountryController {
     //Get country by id
     @GetMapping("/{id}")
     public ResponseEntity<Country> getById(@PathVariable("id") Long id){
-        return countryService.getById(id);
+        return ResponseEntity.ok(countryService.getById(id));
     }
     //Update country where countryId = id
     @PutMapping("/{id}")

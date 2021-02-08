@@ -1,6 +1,5 @@
 package com.mevludin.APITouristBoard.services;
 
-import com.mevludin.APITouristBoard.exceptions.EntityNotActiveException;
 import com.mevludin.APITouristBoard.exceptions.EntityNotFoundException;
 import com.mevludin.APITouristBoard.models.Country;
 import com.mevludin.APITouristBoard.repositories.CountryRepository;
@@ -17,17 +16,17 @@ public class CountryService {
     @Autowired
     private CountryRepository countryRepository;
 
-    public ResponseEntity<List<Country>> getAll() {
+    public List<Country> getAll() {
         List<Country> countries = countryRepository.findAll();
 
-        return ResponseEntity.ok(countries);
+        return countries;
     }
 
-    public ResponseEntity<Country> getById(Long id) {
+    public Country getById(Long id) {
 
         Country country = countryRepository.findByIdAndActivity(id,true).orElseThrow(()-> new EntityNotFoundException(id,"Country"));
 
-        return ResponseEntity.ok(country);
+        return country;
     }
 
     //POST: Dodavanje nove drzave

@@ -12,4 +12,6 @@ public interface CountryRepository extends JpaRepository<Country,Long> {
     List<Country> findByActivity(Boolean activity);
 
     Optional<Country> findByIdAndActivity(Long id, Boolean activity);
+
+    Country findByCountryName(String countryName);
 }
