@@ -7,34 +7,30 @@ import com.mevludin.APITouristBoard.repositories.CountryRepository;
 import com.mevludin.APITouristBoard.repositories.MunicipalityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-public class MunicipalityService implements HaveParentModelInterface<Municipality>{
+public class MunicipalityService{
 
     @Autowired
     private CountryRepository countryRepository;
     @Autowired
     private MunicipalityRepository municipalityRepository;
 
-    @Override
-    public ResponseEntity<List<Municipality>> getAll(Long countryId) {
+    public List<Municipality> getAll(Long countryId) {
         List<Municipality> municipalities = municipalityRepository.findByCountryIdAndActivity(countryId,true);
 
         if(municipalities.toArray().length == 0)
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Municipality is not found or not active");
 
-        return ResponseEntity.ok(municipalities);
+        return municipalities;
     }
 
-    @Override
-    public ResponseEntity<Municipality> save(Long countryId, Municipality municipality) {
+    public Municipality save(Long countryId, Municipality municipality) {
         Country country = countryRepository.findById(countryId)
                 .orElseThrow(()-> new EntityNotFoundException(countryId,"Country"));
 
@@ -44,34 +40,32 @@ public class MunicipalityService implements HaveParentModelInterface<Municipalit
         boolean newDirectory = new File(ImageService.UPLOAD_DIRECTORY+"/"+country.getCountryName()
                 ,municipality.getMunicipalityName()).mkdir();
 
-        return ResponseEntity.ok(municipalityRepository.save(municipality));
+        final Municipality savedMunicipality = municipalityRepository.save(municipality);
 
+        return savedMunicipality;
     }
 
-    @Override
-    public ResponseEntity<Municipality> getById(Long id) {
+    public Municipality getById(Long id) {
         Municipality municipality = municipalityRepository.findByIdAndActivity(id,true)
                 .orElseThrow(()-> new EntityNotFoundException(id,"Municipality"));
 
-        return ResponseEntity.ok(municipality);
+        return municipality;
     }
 
-    @Override
-    public ResponseEntity<Municipality> updateWhereId(Long id, Municipality municipalityDetails) {
+    public Municipality updateWhereId(Long id, Municipality municipalityDetails) {
         Municipality municipality = municipalityRepository.findByIdAndActivity(id,true)
                 .orElseThrow(()-> new EntityNotFoundException(id,"Municipality"));
 
         municipality.setMunicipalityName(municipalityDetails.getMunicipalityName());
         municipality.setActivity(municipalityDetails.getActivity());
 
-        return ResponseEntity.ok(municipalityRepository.save(municipality));
+        return municipalityRepository.save(municipality);
     }
 
-    @Override
-    public ResponseEntity<List<Municipality>> getAllWhereActiveIs(Long countryId, Boolean active) {
+    public List<Municipality> getAllWhereActiveIs(Long countryId, Boolean active) {
 
         List<Municipality> municipalities = municipalityRepository.findByCountryIdAndActivity(countryId,active);
 
-        return ResponseEntity.ok(municipalities);
+        return municipalities;
     }
 }
