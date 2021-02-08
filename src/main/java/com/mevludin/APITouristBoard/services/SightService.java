@@ -41,7 +41,7 @@ public class SightService  {
     }
 
     //find all active sights, or filter by importance or filter by name, or filter by name and importance
-    public ResponseEntity<List<SightWithRating>> getAllWhere(Long parentId, Optional<Importance> importance, Optional<String> name) {
+    public List<SightWithRating> getAllWhere(Long parentId, Optional<Importance> importance, Optional<String> name) {
         List<Sight> sights;
         //find active sight by importance and name
         if(importance.isPresent() && name.isPresent()){
@@ -69,7 +69,7 @@ public class SightService  {
                 return sightWithRating;
         }).collect(Collectors.toList());
 
-        return ResponseEntity.ok(sightWithRatingList);
+        return sightWithRatingList;
 
     }
 
@@ -102,7 +102,7 @@ public class SightService  {
     }
 
     //GET active sight, where sightId = id
-    public ResponseEntity<Sight> getById(Long id) {
+    public Sight getById(Long id) {
 
         Sight sight = sightRepository.findByIdAndActivity(id, true)
                 .orElseThrow(() -> {
@@ -119,11 +119,11 @@ public class SightService  {
         withRating.setRating(rating);
         withRating.setNumOfReviews(numOfReviews);
 
-        return ResponseEntity.ok(withRating);
+        return withRating;
     }
 
     //Update Sight where sightId = id, set details of sight to sightDetails object
-    public ResponseEntity<Sight> updateWhereId(Long id, Sight sightDetails) {
+    public Sight updateWhereId(Long id, Sight sightDetails) {
         Sight sight = sightRepository.findById(id)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Sight by id: "+ id +" not found"));
 
@@ -135,26 +135,26 @@ public class SightService  {
         sight.setImportance(sightDetails.getImportance());
 
 
-        return ResponseEntity.ok(sightRepository.save(sight));
+        return sightRepository.save(sight);
     }
 
     //Get all active or inactive sight, active for active = true, inactive for active = false
-    public ResponseEntity<List<Sight>> getAllWhereActiveIs(Long parentId, Boolean active) {
+    public List<Sight> getAllWhereActiveIs(Long parentId, Boolean active) {
 
         List<Sight> activeSights = sightRepository.findByMunicipalityIdAndActivity(parentId, active);
 
-        return ResponseEntity.ok(activeSights);
+        return activeSights;
     }
 
     //Change activities for sights. Only logged in users allowed
-    public ResponseEntity<Sight> setActivity(Long id, Boolean active) {
+    public Sight setActivity(Long id, Boolean active) {
         Sight sight = sightRepository.findById(id)
                 .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"Sight by id: "+ id +" not found"));
 
         //set activity to active value: true/false
         sight.setActivity(active);
 
-        return ResponseEntity.ok(sightRepository.save(sight));
+        return sightRepository.save(sight);
     }
 
 }

@@ -5,7 +5,6 @@ import com.mevludin.APITouristBoard.models.Sight;
 import com.mevludin.APITouristBoard.models.SightWithRating;
 import com.mevludin.APITouristBoard.services.SightService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +30,7 @@ public class SightController {
     //find all active sights, or filter by importance or filter by name, or filter by name and importance
     @GetMapping
     public ResponseEntity<List<SightWithRating>> getAllWhere(@PathVariable(value = "parentId") Long parentId, @RequestParam(name="importance") Optional<Importance> importance, @RequestParam Optional<String > name){
-        return sightService.getAllWhere(parentId,importance, name);
+        return ResponseEntity.ok(sightService.getAllWhere(parentId,importance, name));
     }
 
     //Save new sight, where municipalityId = parentId
@@ -43,20 +42,20 @@ public class SightController {
     //Get sight by id, where sightId = {id}
     @GetMapping("/{id}")
     public ResponseEntity<Sight> getById(@PathVariable(name = "id") Long id){
-        return sightService.getById(id);
+        return ResponseEntity.ok(sightService.getById(id));
     }
 
     //Update sight where sightId = {id}
     @PutMapping("/{id}")
     public ResponseEntity<Sight> updateWhereId(@PathVariable(name = "id") Long id, @RequestBody Sight sightDetails){
-        return sightService.updateWhereId(id,sightDetails);
+        return ResponseEntity.ok(sightService.updateWhereId(id,sightDetails));
     }
 
     //Get all active or inactive sight ?active=true for active ?active=false for inactive
     @GetMapping("/active")
     @ResponseBody
     public ResponseEntity<List<Sight>> getAllWhereWhereActiveIs(@PathVariable(value = "parentId") Long parentId, @RequestParam(name = "active") Boolean active){
-        return sightService.getAllWhereActiveIs(parentId,active);
+        return ResponseEntity.ok(sightService.getAllWhereActiveIs(parentId,active));
     }
 
 
@@ -66,7 +65,7 @@ public class SightController {
      */
     @PutMapping("/{id}/active")
     public ResponseEntity<Sight> setActivityWhereId(@PathVariable(value = "id") Long id, @RequestParam(required = true, name = "active") Boolean active){
-        return sightService.setActivity(id,active);
+        return ResponseEntity.ok(sightService.setActivity(id,active));
     }
 
 }
