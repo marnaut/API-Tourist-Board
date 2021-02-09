@@ -34,8 +34,8 @@ public class CountryController {
     }
     //Save new country
     @PostMapping
-    public void save(@RequestBody Country country){
-        countryService.save(country);
+    public ResponseEntity<Country> save(@RequestBody Country country){
+        return ResponseEntity.ok(countryService.save(country));
     }
     //Get country by id
     @GetMapping("/{id}")
@@ -46,14 +46,14 @@ public class CountryController {
     @PutMapping("/{id}")
     public ResponseEntity<Country> updateWhereId(@PathVariable(value = "id") Long id,
                                                  @RequestBody Country countryDetails){
-        return countryService.updateWhereId(id,countryDetails);
+        return ResponseEntity.ok(countryService.updateWhereId(id,countryDetails));
     }
     //Get all active countries where activity = true,  for active
     //Get all inactive countries, where activity = false
     @GetMapping("/active")
     @ResponseBody
     public ResponseEntity<List<Country>> getActive(@RequestParam(name = "active") Boolean active){
-        return countryService.getAllWhereActiveIs(active);
+        return ResponseEntity.ok(countryService.getAllWhereActiveIs(active));
     }
 
 

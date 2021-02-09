@@ -16,6 +16,7 @@ public class Country {
     private String countryAbbreviations;
 
     @Column(nullable = false)
+    //Active by default
     private Boolean activity = true;
 
     @OneToMany(mappedBy = "country")
@@ -28,6 +29,10 @@ public class Country {
         this.countryName = countryName;
         this.countryAbbreviations = countryAbbreviations;
         this.activity = activity;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {
@@ -60,6 +65,10 @@ public class Country {
 
     public List<Municipality> getMunicipalityList() {
         return municipalityList;
+    }
+
+    public void setMunicipalityList(List<Municipality> municipalityList) {
+        this.municipalityList = municipalityList;
     }
 
 }
