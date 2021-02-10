@@ -29,7 +29,7 @@ public class SightService  {
 
     private final ImageService imageService;
 
-    private ImageDbRepository imageDbRepository;
+    private final ImageDbRepository imageDbRepository;
 
     @Autowired
     public SightService(SightRepository sightRepository, MunicipalityRepository municipalityRepository, ReviewRepository reviewRepository, ImageService imageService, ImageDbRepository imageDbRepository) {
