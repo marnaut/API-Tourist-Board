@@ -25,13 +25,13 @@ public class CountryRepositoryTest {
     @Test
     public void whenFindByActivity_thenReturnAllActiveCountries(){
         //given
-        Country bosna = new Country("Bosna","ba",true);
-        Country srbija = new Country("Srbija","rs",true);
-        Country hrvatska = new Country("Hrvatska","hr",false);
+        Country bosnia = new Country("Bosna","ba",true);
+        Country serbia = new Country("Srbija","rs",true);
+        Country croatia = new Country("Hrvatska","hr",false);
 
-        entityManager.persist(bosna);
-        entityManager.persist(srbija);
-        entityManager.persist(hrvatska);
+        entityManager.persist(bosnia);
+        entityManager.persist(serbia);
+        entityManager.persist(croatia);
         entityManager.flush();
 
         List<Country> found = countryRepository.findByActivity(true);
@@ -43,26 +43,26 @@ public class CountryRepositoryTest {
     @Test
     public void whenFindByIdAndActivity_thenReturnOneCountryWhereIdAndActivityIsTrue(){
         //given
-        Country bosna = new Country("Bosna","ba",true);
-        Country srbija = new Country("Srbija","rs",true);
-        Country hrvatska = new Country("Hrvatska","hr",false);
+        Country bosnia = new Country("Bosnia","ba",true);
+        Country serbia = new Country("Serbia","rs",true);
+        Country croatia = new Country("Croatia","hr",false);
 
-        entityManager.persist(bosna);
-        entityManager.persist(srbija);
-        entityManager.persist(hrvatska);
+        entityManager.persist(bosnia);
+        entityManager.persist(serbia);
+        entityManager.persist(croatia);
         entityManager.flush();
 
-        Country found = countryRepository.findByIdAndActivity(bosna.getId(),true).orElse(hrvatska);
+        Country found = countryRepository.findByIdAndActivity(bosnia.getId(),true).orElse(croatia);
 
         //than
-        assertThat(found).isEqualTo(bosna);
+        assertThat(found).isEqualTo(bosnia);
     }
 
     @Test
     public void whenFindByIdAndActivity_thenReturnOneCountryWhereIdAndActivityIsFalse(){
-        Country bosnia = new Country("Bosna","ba",true);
-        Country serbia = new Country("Srbija","rs",true);
-        Country croatia = new Country("Hrvatska","hr",false);
+        Country bosnia = new Country("Bosnia","ba",true);
+        Country serbia = new Country("Serbia","rs",true);
+        Country croatia = new Country("Croatia","hr",false);
 
         entityManager.persist(bosnia);
         entityManager.persist(serbia);
